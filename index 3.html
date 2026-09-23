@@ -1,0 +1,516 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#ff5f9e">
+<title>My Phrase Music</title>
+<style>
+:root{
+  --pink:#ff5f9e; --pink2:#ff8fba; --pink3:#ffe7f0; --deep:#171317;
+  --muted:#8d858b; --card:#fff; --bg:#fff7fa; --line:#f0dce4;
+  --shadow:0 10px 30px rgba(215,63,117,.10);
+}
+*{box-sizing:border-box} html,body{margin:0;padding:0;background:var(--bg);color:var(--deep);font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","Hiragino Kaku Gothic ProN","Yu Gothic",sans-serif}
+button,input{font:inherit} button{cursor:pointer;border:0}
+body{min-height:100vh}
+.app{max-width:760px;margin:auto;padding:18px 16px 40px}
+.topbar{display:flex;align-items:center;justify-content:space-between;padding:6px 2px 18px}
+.logo{font-weight:900;font-size:22px;letter-spacing:-.6px}.logo span{color:var(--pink)}
+.top-actions{display:flex;gap:8px}
+.icon-btn{width:42px;height:42px;border-radius:50%;background:#fff;border:1px solid var(--line);box-shadow:var(--shadow);font-size:18px}
+.hero{background:linear-gradient(135deg,#fff,#ffeaf2);border:1px solid #f5d8e3;border-radius:28px;padding:25px 24px;margin-bottom:14px;box-shadow:var(--shadow)}
+.hero h1{font-size:30px;line-height:1.1;margin:0 0 8px;letter-spacing:-1.2px}
+.hero p{margin:0;color:#7c7076;font-size:14px}
+.tabs{display:grid;grid-template-columns:1fr 1fr;background:#f4e9ed;padding:4px;border-radius:16px;margin:14px 0}
+.tab{padding:11px;border-radius:13px;background:transparent;font-weight:800;color:#8b7d83}.tab.active{background:#fff;color:var(--pink);box-shadow:0 3px 12px rgba(0,0,0,.06)}
+.card{background:#fff;border:1px solid var(--line);border-radius:25px;padding:19px;margin:14px 0;box-shadow:var(--shadow)}
+.section-title{font-weight:900;font-size:18px;margin:0 0 14px;display:flex;align-items:center;justify-content:space-between}
+.file-label{display:flex;align-items:center;gap:10px;background:var(--pink3);border:1px dashed #f3a9c6;color:#c72f6b;border-radius:17px;padding:14px;font-weight:800}
+.file-label input{display:none}
+.hint{font-size:12px;color:var(--muted);margin:9px 2px 0}
+.now{padding:22px 18px;background:linear-gradient(160deg,#ffedf4,#fff);border-radius:22px;border:1px solid #f5d5e1}
+.eyebrow{font-size:12px;color:var(--pink);font-weight:900;letter-spacing:1px}
+.now h2{font-size:23px;margin:5px 0 2px;line-height:1.2}.now .desc{color:#8b7d83;font-size:13px;margin-bottom:16px}
+.progress{height:7px;background:#f1dce4;border-radius:10px;overflow:hidden;margin:14px 0 5px}.progress i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--pink),#ff9fc5);border-radius:10px}
+.time{display:flex;justify-content:space-between;font-size:11px;color:#9a8d93}
+.controls{display:grid;grid-template-columns:48px 1fr 48px;gap:10px;align-items:center;margin-top:15px}
+.ctrl{height:48px;border-radius:16px;background:#f7eef1;color:#c62f6c;font-weight:900}.play{height:52px;border-radius:17px;background:var(--deep);color:white;font-size:16px;font-weight:900}
+.mode-row{display:flex;gap:8px;margin-top:12px}.mode{flex:1;background:#f8f0f3;color:#806f77;border-radius:13px;padding:10px 8px;font-size:12px;font-weight:800}.mode.active{background:var(--pink3);color:#cf2f6d}
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}.full{grid-column:1/-1}
+input[type=text],input[type=number],input[type=search],select{width:100%;border:1px solid #e6d9de;background:#fff;border-radius:15px;padding:14px;outline:none}
+input:focus,select:focus{border-color:#ff9ac0;box-shadow:0 0 0 3px #ffe6ef}
+.primary{width:100%;padding:14px;border-radius:16px;background:var(--deep);color:#fff;font-weight:900;margin-top:10px}
+.secondary{padding:10px 13px;border-radius:13px;background:var(--pink3);color:#c72f6b;font-weight:800}
+.phrase-list,.playlist-list{display:grid;gap:10px}.item{display:flex;align-items:center;gap:12px;padding:13px;border:1px solid #f0e1e6;border-radius:17px;background:#fff}
+.item .thumb{width:44px;height:44px;border-radius:14px;background:linear-gradient(135deg,#ffd2e3,#ff8db8);display:grid;place-items:center;color:white;font-weight:900}
+.item-main{min-width:0;flex:1}.item-title{font-weight:900;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.item-sub{font-size:12px;color:#988b91;margin-top:3px}
+.item-actions{display:flex;gap:5px}.mini{width:36px;height:36px;border-radius:11px;background:#f8eef1;color:#bd3569}
+.empty{text-align:center;color:#9a8e94;padding:25px 10px;font-size:13px}
+.playlist-card{padding:15px;border-radius:18px;background:#fff7fa;border:1px solid #f1dbe3}
+.playlist-head{display:flex;align-items:center;justify-content:space-between;gap:8px}.playlist-name{font-weight:900}.count{font-size:11px;color:#a18e96}
+.playlist-buttons{display:flex;gap:7px;margin-top:10px}.playlist-buttons button{flex:1}
+.toast{position:fixed;left:50%;bottom:22px;transform:translateX(-50%) translateY(20px);background:#171317;color:#fff;padding:11px 16px;border-radius:14px;font-size:13px;opacity:0;pointer-events:none;transition:.25s;z-index:20}.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+.footer{text-align:center;color:#b0a2a8;font-size:11px;padding:18px}
+.picker{position:fixed;inset:0;background:rgba(40,20,30,.28);backdrop-filter:blur(5px);display:grid;place-items:end center;padding:16px;z-index:30}.picker-card{width:min(560px,100%);background:#fff;border-radius:26px;padding:18px;box-shadow:0 20px 60px rgba(80,20,45,.2)}.picker-head{display:flex;justify-content:space-between;align-items:center;font-size:17px;margin-bottom:12px}.picker-close{width:36px;height:36px;border-radius:50%;background:#f8eef1;color:#9b6d7d;font-size:22px}.picker-list{display:grid;gap:8px;max-height:55vh;overflow:auto}.picker-item{width:100%;text-align:left;padding:14px;border:1px solid #f0dce4;background:#fff7fa;border-radius:16px;font-weight:800;color:#6f5661}.picker-item small{display:block;font-weight:500;color:#9a8d93;margin-top:3px}.hidden{display:none!important}
+@media(min-width:700px){.app{padding-top:28px}.hero{padding:32px}.card{padding:23px}}
+
+.stop-btn{font-size:14px!important}
+.playlist-items{display:grid;gap:7px;margin-top:12px}
+.playlist-track{display:flex;align-items:center;gap:8px;padding:9px 10px;border:1px solid #f0dce4;border-radius:14px;background:#fff}
+.track-no{width:24px;height:24px;border-radius:8px;background:#ffe7f0;color:#bd3569;display:grid;place-items:center;font-size:11px;font-weight:900;flex:none}
+.playlist-track .mini{flex:none}
+.playlist-buttons{flex-wrap:wrap}
+.playlist-buttons button{flex:1 1 42%}
+</style>
+</head>
+<body>
+<div class="app">
+  <header class="topbar">
+    <div class="logo">My <span>Phrase</span> Music</div>
+    <div class="top-actions">
+      <button class="icon-btn" id="randomTop" title="ランダム再生">🔀</button>
+      <button class="icon-btn" id="clearAll" title="データを削除">⌫</button>
+    </div>
+  </header>
+
+  <section class="hero">
+    <h1>好きなワンフレーズだけ集めよう</h1>
+    <p>曲の「ここだけ聴きたい」を保存して、気分に合わせてランダム再生。</p>
+  </section>
+
+  <div class="tabs">
+    <button class="tab active" data-tab="phrases">🎵 フレーズ</button>
+    <button class="tab" data-tab="playlists">💗 プレイリスト</button>
+  </div>
+
+  <main id="phrasesTab">
+    <section class="card">
+      <h3 class="section-title">🎧 音源を選ぶ</h3>
+      <label class="file-label">🎵　音声ファイルを追加
+        <input id="audioFile" type="file" accept="audio/*">
+      </label>
+      <div class="hint" id="fileHint">まだ音源が選択されていません</div>
+    </section>
+
+    <section class="card">
+      <div class="now">
+        <div class="eyebrow">NOW PLAYING</div>
+        <h2 id="nowTitle">フレーズを追加してね</h2>
+        <div class="desc" id="nowDesc">音源を選ぶとここで再生できます</div>
+        <audio id="audio"></audio>
+        <div class="progress"><i id="bar"></i></div>
+        <div class="time"><span id="current">0:00</span><span id="duration">0:00</span></div>
+        <div class="controls">
+          <button class="ctrl" id="prev">‹</button>
+          <button class="play" id="play">▶ 再生</button>
+          <button class="ctrl stop-btn" id="stop" title="停止">■</button>
+          <button class="ctrl" id="next">›</button>
+        </div>
+        <div class="mode-row">
+          <button class="mode active" id="normalMode">順番再生</button>
+          <button class="mode" id="randomMode">🔀 ランダム</button>
+          <button class="mode" id="loopMode">↻ ループ</button>
+        </div>
+      </div>
+    </section>
+
+    <section class="card">
+      <h3 class="section-title">＋ 好きなところを追加</h3>
+      <div class="form-grid">
+        <input class="full" id="songName" type="text" placeholder="曲名">
+        <input class="full" id="phraseName" type="text" placeholder="この部分が好き！など">
+        <input id="start" type="number" min="0" step=".1" placeholder="開始 秒">
+        <input id="end" type="number" min="0" step=".1" placeholder="終了 秒">
+      </div>
+      <button class="primary" id="addPhrase">フレーズを追加</button>
+      <div class="hint">例：12.5秒〜18.8秒だけを保存</div>
+    </section>
+
+    <section class="card">
+      <h3 class="section-title"><span>💗 マイフレーズ</span><span id="phraseCount" class="count">0件</span></h3>
+      <div id="phraseList" class="phrase-list"></div>
+    </section>
+  </main>
+
+  <main id="playlistsTab" class="hidden">
+    <section class="card">
+      <h3 class="section-title">＋ プレイリストを作る</h3>
+      <input id="playlistName" type="text" placeholder="プレイリスト名（例：夜に聴きたい）">
+      <button class="primary" id="addPlaylist">プレイリストを作成</button>
+    </section>
+    <section class="card">
+      <h3 class="section-title">💗 My Playlists</h3>
+      <div id="playlistList" class="playlist-list"></div>
+    </section>
+  </main>
+
+  <div class="footer">データはこのブラウザ内に保存されます。GitHub Pagesでも動作するシンプルな1ファイル版。</div>
+</div>
+<div id="playlistPicker" class="picker hidden">
+  <div class="picker-card">
+    <div class="picker-head"><strong>💗 プレイリストに追加</strong><button id="closePicker" class="picker-close">×</button></div>
+    <div id="pickerList" class="picker-list"></div>
+  </div>
+</div>
+<div id="toast" class="toast"></div>
+
+<script>
+const DB_NAME="MyPhraseMusicDB", DB_VER=2;
+let db, audioBlob=null, audioURL=null, phrases=[], playlists=[], current=-1;
+let mode="normal", looping=false, activePlaylistIds=null, loadingToken=0;
+
+const $=id=>document.getElementById(id);
+const esc=s=>String(s??"").replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[m]));
+const fmt=t=>{t=Number(t)||0;return Math.floor(t/60)+":"+String(Math.floor(t%60)).padStart(2,"0")};
+function toast(s){$("toast").textContent=s;$("toast").classList.add("show");clearTimeout(window.__toast);window.__toast=setTimeout(()=>$("toast").classList.remove("show"),1800)}
+
+function openDB(){
+ return new Promise((res,rej)=>{
+  const r=indexedDB.open(DB_NAME,DB_VER);
+  r.onupgradeneeded=()=>{const d=r.result;
+   if(!d.objectStoreNames.contains("audio"))d.createObjectStore("audio");
+   if(!d.objectStoreNames.contains("data"))d.createObjectStore("data");
+  };
+  r.onsuccess=()=>{db=r.result;res()};r.onerror=()=>rej(r.error)
+ })
+}
+function put(store,key,val){return new Promise((res,rej)=>{const tx=db.transaction(store,"readwrite");tx.objectStore(store).put(val,key);tx.oncomplete=res;tx.onerror=()=>rej(tx.error)})}
+function get(store,key){return new Promise((res,rej)=>{const tx=db.transaction(store);const r=tx.objectStore(store).get(key);r.onsuccess=()=>res(r.result);r.onerror=()=>rej(r.error)})}
+function del(store,key){return new Promise((res,rej)=>{const tx=db.transaction(store,"readwrite");tx.objectStore(store).delete(key);tx.oncomplete=res;tx.onerror=()=>rej(tx.error)})}
+
+async function load(){
+ phrases=await get("data","phrases")||[];
+ playlists=await get("data","playlists")||[];
+ // 旧バージョンのデータは音源が1つしか保存されていないため、旧フレーズには legacyAudio=true を付ける。
+ // 新規追加分は phrase.id ごとに音源を保存する。
+ audioBlob=await get("audio","main")||null;
+ if(audioBlob){
+   $("fileHint").textContent="音源を選択すると、そのフレーズ専用に保存されます";
+ }else{
+   $("fileHint").textContent="まだ音源が選択されていません";
+ }
+ renderPhrases();renderPlaylists();
+ if(phrases.some(p=>!p.audioId)) toast("以前のフレーズは音源を再登録してください");
+}
+
+async function saveData(){await put("data","phrases",phrases);await put("data","playlists",playlists)}
+
+$("audioFile").onchange=async e=>{
+ const f=e.target.files[0];if(!f)return;
+ audioBlob=f;
+ if(audioURL)URL.revokeObjectURL(audioURL);
+ audioURL=URL.createObjectURL(f);
+ $("audio").src=audioURL;
+ $("fileHint").textContent=f.name+"（次に追加するフレーズへ保存）";
+ $("audio").load();
+ toast("音源を選択しました");
+};
+
+$("audio").onloadedmetadata=()=>{
+ $("duration").textContent=fmt($("audio").duration);
+};
+
+$("audio").ontimeupdate=()=>{
+ const a=$("audio");
+ $("current").textContent=fmt(a.currentTime);
+ $("bar").style.width=(a.duration?a.currentTime/a.duration*100:0)+"%";
+ if(current>=0 && phrases[current] && a.currentTime>=Number(phrases[current].end)){
+   if(looping){a.currentTime=Number(phrases[current].start);a.play().catch(()=>{})}
+   else nextPhrase(true,true);
+ }
+};
+
+$("audio").onended=()=>{
+ if(!looping) nextPhrase(true,true);
+};
+
+$("audio").onplay=()=>{$("play").textContent="❚❚ 一時停止"};
+$("audio").onpause=()=>{$("play").textContent="▶ 再生"};
+
+$("play").onclick=async()=>{
+ if(current<0){
+   if(!phrases.length)return toast("先にフレーズを追加してね");
+   await selectPhrase(0,true);
+   return;
+ }
+ if($("audio").paused) $("audio").play().catch(()=>toast("音源を選択してください"));
+ else $("audio").pause();
+};
+
+$("stop").onclick=()=>{
+ $("audio").pause();
+ if(current>=0 && phrases[current]) $("audio").currentTime=Number(phrases[current].start)||0;
+ $("bar").style.width="0%";
+ $("current").textContent=fmt(phrases[current]?.start||0);
+};
+
+$("prev").onclick=()=>nextPhrase(false,true);
+$("next").onclick=()=>nextPhrase(true,true);
+
+$("normalMode").onclick=()=>setMode("normal");
+$("randomMode").onclick=()=>setMode("random");
+$("loopMode").onclick=()=>{
+ looping=!looping;
+ $("loopMode").classList.toggle("active",looping);
+ toast(looping?"今のフレーズをループ":"ループを解除");
+};
+
+$("randomTop").onclick=()=>{
+ if(!phrases.length)return toast("先にフレーズを追加してね");
+ activePlaylistIds=null;
+ setMode("random",false);
+ nextPhrase(true,true,true);
+};
+
+function setMode(m,showToast=true){
+ mode=m;
+ document.querySelectorAll(".mode").forEach(x=>x.classList.remove("active"));
+ $(m==="normal"?"normalMode":"randomMode").classList.add("active");
+ if(showToast)toast(m==="random"?"マイフレーズをランダム再生":"順番再生");
+}
+
+async function loadPhraseAudio(p){
+ const token=++loadingToken;
+ let blob=null;
+ if(p.audioId) blob=await get("audio",p.audioId);
+ // 旧データ救済：旧版の main 音源がある場合のみ使用
+ if(!blob && !p.audioId) blob=await get("audio","main");
+ if(token!==loadingToken)return false;
+ if(!blob){
+   toast("このフレーズの音源がありません。音源を選び直して再登録してください");
+   return false;
+ }
+ if(audioURL)URL.revokeObjectURL(audioURL);
+ audioBlob=blob;
+ audioURL=URL.createObjectURL(blob);
+ $("audio").src=audioURL;
+ $("fileHint").textContent=(p.fileName||"保存済みの音源")+"（フレーズ専用）";
+ $("audio").load();
+ return true;
+}
+
+async function selectPhrase(i,autoplay=false){
+ if(!phrases[i])return;
+ current=i;
+ const p=phrases[i];
+ $("nowTitle").textContent=p.title||p.song||"無題";
+ $("nowDesc").textContent=(p.song||"")+(p.title?"　・　"+p.title:"")+"　"+fmt(p.start)+"〜"+fmt(p.end);
+ renderPhrases();
+ const ok=await loadPhraseAudio(p);
+ if(!ok)return;
+ $("audio").currentTime=Number(p.start)||0;
+ if(autoplay)await $("audio").play().catch(()=>toast("再生できません。音源を選び直してください"));
+}
+
+function getPool(){
+ return activePlaylistIds
+  ? activePlaylistIds.map(id=>phrases.findIndex(x=>x.id===id)).filter(i=>i>=0)
+  : phrases.map((_,i)=>i);
+}
+
+function nextPhrase(forward=true,autoplay=true,fromRandomButton=false){
+ const pool=getPool();
+ if(!pool.length)return;
+ let n;
+ if(mode==="random"){
+   n=pool[Math.floor(Math.random()*pool.length)];
+   if(pool.length>1 && n===current){
+     const other=pool.filter(i=>i!==current);
+     n=other[Math.floor(Math.random()*other.length)];
+   }
+ }else{
+   const pos=pool.indexOf(current);
+   n=pool[pos<0?0:(pos+(forward?1:-1)+pool.length)%pool.length];
+ }
+ selectPhrase(n,autoplay);
+ if(fromRandomButton)toast("マイフレーズをランダム再生中");
+}
+
+$("addPhrase").onclick=async()=>{
+ const f=$("audioFile").files[0]||audioBlob;
+ if(!f)return toast("先に音源を選んでね");
+ const song=$("songName").value.trim(), title=$("phraseName").value.trim();
+ const start=Number($("start").value), end=Number($("end").value);
+ if(!song||!Number.isFinite(start)||!Number.isFinite(end)||start<0||end<=start)
+   return toast("曲名・開始・終了を確認してね");
+ const duration=$("audio").duration;
+ if(Number.isFinite(duration)&&end>duration)return toast("終了秒が音源より長いです");
+
+ const id=crypto.randomUUID();
+ await put("audio",id,f); // ★フレーズごとに音源そのものを保存
+ phrases.push({id,song,title,start,end,audioId:id,fileName:f.name});
+ await saveData();
+ renderPhrases();
+ await selectPhrase(phrases.length-1,false);
+
+ $("songName").value="";$("phraseName").value="";$("start").value="";$("end").value="";
+ toast("フレーズを保存しました");
+};
+
+function renderPhrases(){
+ $("phraseCount").textContent=phrases.length+"件";
+ $("phraseList").innerHTML=phrases.length?phrases.map((p,i)=>`
+ <div class="item">
+  <div class="thumb">♪</div>
+  <div class="item-main">
+   <div class="item-title">${esc(p.title||p.song)}</div>
+   <div class="item-sub">${esc(p.song)}　${fmt(p.start)} — ${fmt(p.end)}</div>
+  </div>
+  <div class="item-actions">
+   <button class="mini" onclick="selectPhrase(${i},true)">▶</button>
+   <button class="mini" onclick="addToPlaylist(${i})">＋</button>
+   <button class="mini" onclick="removePhrase(${i})">×</button>
+  </div>
+ </div>`).join(""):`<div class="empty">まだフレーズがありません。<br>好きな部分を切り取って追加してみよう。</div>`;
+}
+
+window.removePhrase=async i=>{
+ const p=phrases[i];if(!p)return;
+ if(p.audioId)await del("audio",p.audioId);
+ // どのプレイリストからも自動で外す
+ playlists.forEach(pl=>pl.items=pl.items.filter(id=>id!==p.id));
+ phrases.splice(i,1);
+ if(current===i){current=-1;$("audio").pause();}
+ else if(current>i)current--;
+ await saveData();renderPhrases();renderPlaylists();toast("フレーズを削除しました");
+};
+
+window.addToPlaylist=async i=>{
+ if(!playlists.length)return toast("先にプレイリストを作ってね");
+ const picker=$("playlistPicker"),list=$("pickerList");
+ list.innerHTML=playlists.map((p,n)=>`
+  <button class="picker-item" onclick="choosePlaylist(${n},${i})">
+   💗 ${esc(p.name)}<small>${p.items.length}フレーズ</small>
+  </button>`).join("");
+ picker.classList.remove("hidden");
+};
+
+window.choosePlaylist=async(pi,fi)=>{
+ const p=playlists[pi], phrase=phrases[fi];if(!p||!phrase)return;
+ if(!p.items.includes(phrase.id))p.items.push(phrase.id);
+ await saveData();renderPlaylists();$("playlistPicker").classList.add("hidden");
+ toast("「"+p.name+"」に追加しました");
+};
+
+$("closePicker").onclick=()=>$("playlistPicker").classList.add("hidden");
+$("playlistPicker").onclick=e=>{if(e.target.id==="playlistPicker")$("playlistPicker").classList.add("hidden")};
+
+$("addPlaylist").onclick=async()=>{
+ const name=$("playlistName").value.trim();
+ if(!name)return toast("プレイリスト名を入力してね");
+ playlists.push({id:crypto.randomUUID(),name,items:[]});
+ $("playlistName").value="";
+ await saveData();renderPlaylists();toast("プレイリストを作りました");
+};
+
+function playlistItems(p){
+ return p.items.map(id=>phrases.find(x=>x.id===id)).filter(Boolean);
+}
+
+function renderPlaylists(){
+ $("playlistList").innerHTML=playlists.length?playlists.map((p,i)=>{
+   const items=playlistItems(p);
+   return `<div class="playlist-card">
+    <div class="playlist-head">
+     <div class="playlist-name">💗 ${esc(p.name)}</div>
+     <div class="count">${items.length}フレーズ</div>
+    </div>
+    <div class="playlist-items">
+     ${items.length?items.map((x,j)=>`
+       <div class="playlist-track">
+        <div class="track-no">${j+1}</div>
+        <div class="item-main"><div class="item-title">${esc(x.title||x.song)}</div><div class="item-sub">${esc(x.song)}　${fmt(x.start)}〜${fmt(x.end)}</div></div>
+        <button class="mini" onclick="playPlaylistPhrase(${i},'${x.id}')">▶</button>
+        <button class="mini" onclick="removeFromPlaylist(${i},'${x.id}')">×</button>
+       </div>`).join("")
+      :`<div class="empty">まだフレーズがありません</div>`}
+    </div>
+    <div class="playlist-buttons">
+     <button class="secondary" onclick="playPlaylist(${i})">▶ このリストを再生</button>
+     <button class="secondary" onclick="addToPlaylistFromList(${i})">＋ 追加</button>
+     <button class="secondary" onclick="renamePlaylist(${i})">名前変更</button>
+     <button class="secondary" onclick="deletePlaylist(${i})">削除</button>
+    </div>
+   </div>`;
+ }).join(""):`<div class="empty">プレイリストはまだありません。<br>好きなテーマごとにフレーズをまとめよう。</div>`;
+}
+
+window.addToPlaylistFromList=i=>{
+ if(!phrases.length)return toast("先にフレーズを追加してね");
+ const picker=$("playlistPicker"),list=$("pickerList");
+ list.innerHTML=phrases.map((p,n)=>`
+  <button class="picker-item" onclick="addDirectToPlaylist(${i},${n})">
+   🎵 ${esc(p.title||p.song)}<small>${esc(p.song)}　${fmt(p.start)}〜${fmt(p.end)}</small>
+  </button>`).join("");
+ picker.classList.remove("hidden");
+};
+
+window.addDirectToPlaylist=async(pi,fi)=>{
+ const p=playlists[pi],phrase=phrases[fi];if(!p||!phrase)return;
+ if(!p.items.includes(phrase.id))p.items.push(phrase.id);
+ await saveData();renderPlaylists();$("playlistPicker").classList.add("hidden");toast("追加しました");
+};
+
+window.removeFromPlaylist=async(pi,id)=>{
+ const p=playlists[pi];if(!p)return;
+ p.items=p.items.filter(x=>x!==id);
+ await saveData();renderPlaylists();toast("プレイリストから外しました");
+};
+
+window.playPlaylist=i=>{
+ const p=playlists[i],valid=p?.items.filter(id=>phrases.some(x=>x.id===id))||[];
+ if(!valid.length)return toast("このプレイリストは空です");
+ activePlaylistIds=valid;
+ setMode("normal",false);
+ const first=phrases.findIndex(x=>x.id===valid[0]);
+ selectPhrase(first,true);
+ toast("「"+p.name+"」を再生中");
+};
+
+window.playPlaylistPhrase=(pi,id)=>{
+ const p=playlists[pi];if(!p)return;
+ const valid=p.items.filter(x=>phrases.some(y=>y.id===x));
+ activePlaylistIds=valid;
+ setMode("normal",false);
+ const idx=phrases.findIndex(x=>x.id===id);
+ if(idx>=0)selectPhrase(idx,true);
+};
+
+window.renamePlaylist=async i=>{
+ const p=playlists[i],n=prompt("プレイリスト名",p.name);
+ if(n&&n.trim()){p.name=n.trim();await saveData();renderPlaylists();toast("名前を変更しました")}
+};
+
+window.deletePlaylist=async i=>{
+ if(!confirm("このプレイリストを削除しますか？"))return;
+ if(activePlaylistIds && playlists[i])activePlaylistIds=null;
+ playlists.splice(i,1);await saveData();renderPlaylists();toast("プレイリストを削除しました");
+};
+
+document.querySelectorAll(".tab").forEach(t=>t.onclick=()=>{
+ document.querySelectorAll(".tab").forEach(x=>x.classList.remove("active"));
+ t.classList.add("active");
+ $("phrasesTab").classList.toggle("hidden",t.dataset.tab!=="phrases");
+ $("playlistsTab").classList.toggle("hidden",t.dataset.tab!=="playlists");
+});
+
+$("clearAll").onclick=async()=>{
+ if(!confirm("保存したフレーズ・プレイリスト・音源を全部削除しますか？"))return;
+ phrases=[];playlists=[];current=-1;activePlaylistIds=null;
+ $("audio").pause();
+ const tx=db.transaction(["data","audio"],"readwrite");
+ tx.objectStore("data").put([], "phrases");
+ tx.objectStore("data").put([], "playlists");
+ tx.objectStore("audio").clear();
+ tx.oncomplete=()=>{
+   if(audioURL)URL.revokeObjectURL(audioURL);audioURL=null;audioBlob=null;
+   $("audio").removeAttribute("src");$("fileHint").textContent="まだ音源が選択されていません";
+   renderPhrases();renderPlaylists();toast("すべて削除しました");
+ };
+};
+
+openDB().then(load);
+</script>
+</body>
+</html>
